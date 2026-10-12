@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- White Die-Cut Border -->
+  <path d="M 152 72
+           L 312 72
+           L 440 200
+           L 440 360
+           A 88 88 0 0 1 352 440
+           L 160 440
+           A 88 88 0 0 1 72 352
+           L 72 160
+           A 88 88 0 0 1 160 72 Z"
+        fill="#FFFFFF" />
+
+  <!-- Main Yellow Squircle Sticker Body: #FFC72C -->
+  <path d="M 160 86
+           L 310 86
+           L 426 202
+           L 426 352
+           A 74 74 0 0 1 352 426
+           L 160 426
+           A 74 74 0 0 1 86 352
+           L 86 160
+           A 74 74 0 0 1 160 86 Z"
+        fill="#FFC72C" />
+
+  <!-- Folded Corner Flap: #CA8A04 -->
+  <path d="M 310 86
+           L 426 202
+           L 326 202
+           A 16 16 0 0 1 310 186 Z"
+        fill="#CA8A04" />
+  <path d="M 310 86 L 426 202" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" />
+
+  <!-- Face Elements -->
+  <circle cx="196" cy="242" r="21" fill="#1E1B4B" />
+  <circle cx="156" cy="296" r="26" fill="#FF6B35" />
+  <path d="M 276 248 Q 302 218 328 248" 
+        stroke="#1E1B4B" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M 204 316 Q 262 366 322 298" 
+        stroke="#1E1B4B" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M 320 286 L 328 304" 
+        stroke="#1E1B4B" stroke-width="13" stroke-linecap="round" fill="none" />
+</svg>
