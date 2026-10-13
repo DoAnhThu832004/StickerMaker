@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">StickerMaker</string>
+    <string name="explore_the_world">EXPLORE THE WORLD</string>
+    <string name="of_stickers">OF STICKERS</string>
+    <string name="description_intro1">Thousands of unique sticker packs from creators, just one tap away.</string>
+    <string name="shop_for">SHOP FOR</string>
+    <string name="your_favorite">YOUR FAVORITE</string>"
+    <string name="description_intro2">From cute cats and memes to anime, find the perfect sticker pack for you.</string>
+    <string name="use_theme_in">USE THEME IN</string>
+    <string name="any_chat_app">ANY CHAT APP</string>
+    <string name="description_intro3">Export stickers to Zalo, Telegram, and WhatsApp in just seconds.</string>
 </resources>

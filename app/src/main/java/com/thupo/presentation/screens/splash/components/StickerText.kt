@@ -12,9 +12,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.thupo.presentation.screens.intro.AuroraGlow
-import com.thupo.presentation.screens.intro.NavyDark
-import com.thupo.presentation.screens.intro.NavyMid
+import com.thupo.presentation.screens.intro.components.AuroraGlow
+import com.thupo.presentation.screens.intro.components.NavyDark
+import com.thupo.presentation.screens.intro.components.NavyMid
 import com.thupo.presentation.screens.splash.config.SplashConfig
 import com.thupo.presentation.screens.splash.model.LetterAnimState
 import com.thupo.presentation.screens.splash.model.WordMetrics

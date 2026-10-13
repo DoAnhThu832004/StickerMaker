@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.thupo.presentation.screens.intro.AuroraGlow
 import com.thupo.presentation.screens.splash.components.StickerTextSplash
 import com.thupo.presentation.screens.splash.config.SplashConfig
 

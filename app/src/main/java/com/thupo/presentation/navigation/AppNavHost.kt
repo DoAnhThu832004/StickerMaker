@@ -29,7 +29,13 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
         composable(Screen.Intro.route) {
-            IntroScreen()
+            IntroScreen(
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Intro.route) { inclusive = true }
+                    }
+                }
+            )
         }
         composable(Screen.Home.route) {
             HomeScreen()
