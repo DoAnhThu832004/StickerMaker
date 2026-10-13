@@ -1,4 +1,4 @@
-package com.thupo.presentation.screen.splash
+package com.thupo.presentation.screens.intro
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun SplashScreen() {
+fun IntroScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -17,7 +17,7 @@ fun SplashScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Thupo"
+            text = "Intro Screen"
         )
     }
 }
