@@ -1,6 +1,5 @@
 package com.thupo.presentation.screens.splash
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thupo.presentation.screens.splash.components.StickerTextSplash
-import com.thupo.presentation.screens.splash.config.SplashConfig
 
 @Composable
 fun SplashScreen(
@@ -41,7 +39,7 @@ fun SplashScreen(
     }
     SplashContent(
         uiState = uiState,
-        onFishedAnimation = {
+        onFinishedAnimation = {
             viewModel.onEvent(SplashUiEvent.AnimationFinished)
         },
         onRetry = {
@@ -49,25 +47,24 @@ fun SplashScreen(
         }
     )
 }
+
 @Composable
 fun SplashContent(
     uiState: SplashUiState,
-    onFishedAnimation: () -> Unit,
+    onFinishedAnimation: () -> Unit,
     onRetry: () -> Unit,
 ) {
     when (val state = uiState) {
-        is SplashUiState.Loading -> {
+        is SplashUiState.Loading, is SplashUiState.Ready -> {
             StickerTextSplash(
                 onAnimationEnd = {
-                    onFishedAnimation()
+                    onFinishedAnimation()
                 }
             )
         }
         is SplashUiState.Error -> {
-            // Màn hình hiển thị lỗi nếu UseCase nạp dữ liệu thất bại
             Box(
-                modifier = Modifier
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Column(

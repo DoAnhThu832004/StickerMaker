@@ -1,13 +1,11 @@
 package com.thupo.presentation.screens.splash
 
-import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thupo.domain.usecase.PrepareInitialDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val prepareInitialDataUseCase: PrepareInitialDataUseCase,
-): ViewModel() {
+) : ViewModel() {
     private val _uiState = MutableStateFlow<SplashUiState>(SplashUiState.Loading)
     val uiState: StateFlow<SplashUiState> = _uiState.asStateFlow()
 
@@ -32,6 +30,7 @@ class SplashViewModel @Inject constructor(
     init {
         startPreparation()
     }
+
     fun onEvent(event: SplashUiEvent) {
         when (event) {
             is SplashUiEvent.AnimationFinished -> {
@@ -44,6 +43,10 @@ class SplashViewModel @Inject constructor(
         }
     }
 
+    fun onRetry() {
+        startPreparation()
+    }
+
     private fun startPreparation() {
         viewModelScope.launch {
             _uiState.value = SplashUiState.Loading
@@ -54,7 +57,8 @@ class SplashViewModel @Inject constructor(
             result.fold(
                 onSuccess = { navigationToIntro ->
                     targetNavigateToIntro = navigationToIntro
-                    checkAndNavigate() // Kiểm tra xem animation đã xong trước đó chưa
+                    _uiState.value = SplashUiState.Ready(navigationToIntro)
+                    checkAndNavigate()
                 },
                 onFailure = { error ->
                     _uiState.value = SplashUiState.Error(error.message ?: "Đã xảy ra lỗi không xác định")
@@ -62,6 +66,7 @@ class SplashViewModel @Inject constructor(
             )
         }
     }
+
     private fun checkAndNavigate() {
         val toIntro = targetNavigateToIntro
         if (isAnimationFinished && toIntro != null) {

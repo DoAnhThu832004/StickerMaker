@@ -32,6 +32,7 @@ fun StickerTextSplash(
     modifier: Modifier = Modifier,
     word: String = SplashConfig.WORD,
     typeface: Typeface = DefaultTypeface,
+    onExitProgressChanged: (Float) -> Unit = {},
     onAnimationEnd: () -> Unit = {}
 ) {
     // ==========================================
@@ -140,11 +141,18 @@ fun StickerTextSplash(
         }
         delay(SplashConfig.SHIMMER_MS)
 
-        // 6. Exit
+        // 6. Exit / Transition: Zoom-through 25x theo CubicBezierEasing(0.7f, 0f, 0.84f, 0f)
+        val easing = CubicBezierEasing(0.7f, 0f, 0.84f, 0f)
+        val exitAnim = Animatable(0f)
         coroutineScope {
-            launch { masterScale.animateTo(4f, tween(900, easing = FastOutLinearInEasing)) }
-            launch { masterAlpha.animateTo(0f, tween(800, easing = FastOutLinearInEasing)) }
-            launch { masterBlur.animateTo(blurExit, tween(900)) }
+            launch { masterBlur.animateTo(blurExit, tween(700)) }
+            launch { masterScale.animateTo(25f, tween(700, easing = easing)) }
+            launch { masterAlpha.animateTo(0f, tween(550, easing = easing)) }
+            launch {
+                exitAnim.animateTo(1f, tween(700, easing = easing)) {
+                    onExitProgressChanged(value)
+                }
+            }
         }
 
         // Báo kết thúc
