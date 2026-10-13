@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -25,6 +26,7 @@ fun GlassCard(
             .clip(shape)
             .background(Brush.linearGradient(listOf(Color.White.copy(0.22f), Color.White.copy(0.06f))))
             .border(1.dp, Color.White.copy(0.25f), shape),
+        contentAlignment = Alignment.Center,
         content = content
     )
 }

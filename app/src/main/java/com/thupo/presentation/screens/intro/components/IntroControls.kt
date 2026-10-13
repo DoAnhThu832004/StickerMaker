@@ -20,6 +20,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thupo.R
@@ -102,26 +103,38 @@ fun IntroButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
-        shape = RoundedCornerShape(50),
+        shape = RoundedCornerShape(24),
         contentPadding = PaddingValues(0.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
     ) {
-        Box(
+        GlassCard(
             Modifier
-                .fillMaxSize()
-                .background(Brush.horizontalGradient(listOf(Color.White, Color(0xFFD0D0D8)))),
-            contentAlignment = Alignment.Center
+                .fillMaxSize(),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text, color = Color.Black, fontWeight = FontWeight.SemiBold)
-                Spacer(Modifier.width(8.dp))
-                Icon(
-                    painter = painterResource(R.drawable.ic_launcher_foreground),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
+            Text(text, color = Color.White, fontWeight = FontWeight.SemiBold)
         }
+
+//        Box(
+//            Modifier
+//                .fillMaxSize()
+//                .background(Brush.horizontalGradient(listOf(Color.White, Color(0xFFD0D0D8)))),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            Row(verticalAlignment = Alignment.CenterVertically) {
+//                Text(text, color = Color.Black, fontWeight = FontWeight.SemiBold)
+//                Spacer(Modifier.width(8.dp))
+//                Icon(
+//                    painter = painterResource(R.drawable.ic_launcher_foreground),
+//                    contentDescription = null,
+//                    tint = Color.Unspecified,
+//                    modifier = Modifier.size(18.dp)
+//                )
+//            }
+//        }
     }
+}
+@Preview
+@Composable
+fun IntroButtonPreview() {
+    IntroButton(text = "Tiếp tục", onClick = {})
 }
