@@ -1,5 +1,8 @@
 package com.thupo.presentation.screens.home
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -8,14 +11,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thupo.domain.model.StickerPack
 import com.thupo.presentation.screens.home.components.CreatePackDialog
-import com.thupo.presentation.screens.home.components.SpeedDialFab
+import com.thupo.presentation.screens.home.components.RadialFloatingActionButton
 import com.thupo.presentation.screens.home.components.StickerPackCard
+import com.thupo.presentation.screens.intro.components.AuroraGlow
+import com.thupo.presentation.screens.intro.components.NavyDark
+import com.thupo.presentation.screens.intro.components.NavyMid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,23 +34,33 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Brush.verticalGradient(listOf(NavyDark, NavyMid, NavyDark))),
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = { Text("Sticker Maker", fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
+                    containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         },
+        floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            SpeedDialFab(
+            RadialFloatingActionButton(
+                modifier = Modifier.offset(y = 70.dp),
                 isExpanded = uiState.isSpeedDialExpanded,
                 onToggle = { viewModel.onEvent(HomeUiEvent.OnToggleSpeedDial(it)) },
-                onSelectType = { viewModel.onEvent(HomeUiEvent.OnSelectStickerType(it)) }
+                onSelectAnimated = { viewModel.onEvent(HomeUiEvent.OnSelectStickerType(StickerType.ANIMATED)) },
+                onSelectStatic = { viewModel.onEvent(HomeUiEvent.OnSelectStickerType(StickerType.REGULAR)) },
+                onSelectMyStickers = { viewModel.onEvent(HomeUiEvent.OnSelectMyStickers) },
+                onSelectExplore = { viewModel.onEvent(HomeUiEvent.OnSelectExplore) }
             )
-        }
+        },
     ) { innerPadding ->
+        AuroraGlow()
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -86,6 +104,21 @@ fun HomeScreen(
                         )
                     }
                 }
+            }
+
+            // Backdrop scrim to dismiss radial fan when tapping outside
+            if (uiState.isSpeedDialExpanded) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.35f))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            viewModel.onEvent(HomeUiEvent.OnToggleSpeedDial(false))
+                        }
+                )
             }
         }
     }

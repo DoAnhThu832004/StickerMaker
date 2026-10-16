@@ -17,4 +17,6 @@ sealed interface HomeUiEvent {
     data class OnSelectStickerType(val type: StickerType) : HomeUiEvent
     data object OnDismissCreateDialog : HomeUiEvent
     data class OnConfirmCreatePack(val packName: String, val onSuccess: (Long) -> Unit) : HomeUiEvent
+    data object OnSelectMyStickers : HomeUiEvent
+    data object OnSelectExplore : HomeUiEvent
 }

@@ -50,6 +50,12 @@ class HomeViewModel @Inject constructor(
             is HomeUiEvent.OnConfirmCreatePack -> {
                 createPack(event.packName, event.onSuccess)
             }
+            HomeUiEvent.OnSelectMyStickers -> {
+                _uiState.update { it.copy(isSpeedDialExpanded = false) }
+            }
+            HomeUiEvent.OnSelectExplore -> {
+                _uiState.update { it.copy(isSpeedDialExpanded = false) }
+            }
         }
     }
     private fun createPack(name: String, onSuccess: (Long) -> Unit) {
