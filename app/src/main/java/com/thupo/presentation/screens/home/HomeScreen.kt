@@ -21,6 +21,7 @@ import com.thupo.domain.model.StickerPack
 import com.thupo.presentation.screens.home.components.CreatePackDialog
 import com.thupo.presentation.screens.home.components.RadialFloatingActionButton
 import com.thupo.presentation.screens.home.components.StickerPackCard
+import com.thupo.presentation.screens.home.components.StickerTitle
 import com.thupo.presentation.screens.intro.components.AuroraGlow
 import com.thupo.presentation.screens.intro.components.NavyDark
 import com.thupo.presentation.screens.intro.components.NavyMid
@@ -40,7 +41,12 @@ fun HomeScreen(
         containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
-                title = { Text("Sticker Maker", fontWeight = FontWeight.Bold) },
+                title = {
+                    StickerTitle(
+                        text = "STICKER MAKER",
+                        textSizeDp = 19.dp
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.onBackground
