@@ -1,6 +1,8 @@
 package com.thupo.di
 
+import com.thupo.data.repository.StickerRepositoryImpl
 import com.thupo.data.repository.UserPreferencesRepositoryImpl
+import com.thupo.domain.repository.StickerRepository
 import com.thupo.domain.repository.UserPreferencesRepository
 import dagger.Binds
 import dagger.Module
@@ -16,4 +18,10 @@ abstract class RepositoryModule {
     abstract fun bindUserPreferencesRepository(
         userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl
     ) : UserPreferencesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindStickerRepository(
+        stickerRepositoryImpl: StickerRepositoryImpl
+    ) : StickerRepository
 }
