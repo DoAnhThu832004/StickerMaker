@@ -1,6 +1,5 @@
 package com.thupo.presentation.screens.intro.components.heros
 
-import android.provider.Settings
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -39,11 +38,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -119,9 +116,12 @@ private fun getCircularOffset(itemIndex: Int, currentIndex: Float, count: Int): 
 }
 
 /**
- * PlatformsHero - 3D Radial Fan / Carousel
- * Showcases multi-platform sticker export with a 3D arc perspective, interactive card selection,
- * brand glows, sample chat previews and platform quick-pills.
+ * PlatformsHero - Refined Clean 3D Carousel (Cách 1).
+ * Eliminates visual chaos:
+ * 1. Opaque dark background so background cards never bleed text through.
+ * 2. Inactive wing cards only show their clean icon & brand name.
+ * 3. 4th card in the back is completely hidden.
+ * 4. Active center card has crisp focus, brand glow and preview.
  */
 @Composable
 fun PlatformsHero(
@@ -153,8 +153,8 @@ fun PlatformsHero(
                 if (!isUserInteracted) {
                     selectedIndex = (selectedIndex + 1) % PlatformList.size
                 } else {
-                    // Pause for 4 seconds after user taps, then resume
-                    delay(4000)
+                    // Pause for 4.5 seconds after user taps, then resume
+                    delay(4500)
                     isUserInteracted = false
                 }
             }
@@ -162,8 +162,9 @@ fun PlatformsHero(
     }
 
     val density = LocalDensity.current
-    val cardSpreadPx = with(density) { 72.dp.toPx() }
-    val arcDropPx = with(density) { 10.dp.toPx() }
+    val cardSpreadPx = with(density) { 82.dp.toPx() }
+    val arcDropPx = with(density) { 12.dp.toPx() }
+    val darkCardBase = Color(0xFF0F1332)
 
     Column(
         modifier = modifier
@@ -172,151 +173,211 @@ fun PlatformsHero(
             .semantics { contentDescription = "Trình xem các nền tảng chat hỗ trợ sticker" },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 3D Radial Fan Area
+        // 3D Clean Carousel Area
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(230.dp),
+                .height(236.dp),
             contentAlignment = Alignment.Center
         ) {
             PlatformList.forEachIndexed { i, platform ->
                 val offset = getCircularOffset(i, animatedIndex, PlatformList.size)
                 val absOffset = abs(offset)
-                val isActive = absOffset < 0.4f
+                val isActive = absOffset < 0.45f
 
+                // Hide the 4th card in the back completely to avoid clutter
+                val isVisible = absOffset < 1.35f
                 val cardZIndex = (10f - absOffset).coerceAtLeast(0f)
 
-                Box(
-                    modifier = Modifier
-                        .zIndex(cardZIndex)
-                        .graphicsLayer {
-                            translationX = offset * cardSpreadPx
-                            translationY = absOffset * absOffset * arcDropPx
-                            rotationZ = (offset * 8.5f).coerceIn(-25f, 25f)
-                            rotationY = (-offset * 14f).coerceIn(-30f, 30f)
-                            cameraDistance = 16f * density.density
+                if (isVisible) {
+                    Box(
+                        modifier = Modifier
+                            .zIndex(cardZIndex)
+                            .graphicsLayer {
+                                translationX = offset * cardSpreadPx
+                                translationY = absOffset * absOffset * arcDropPx
+                                rotationZ = (offset * 8f).coerceIn(-22f, 22f)
+                                rotationY = (-offset * 12f).coerceIn(-28f, 28f)
+                                cameraDistance = 16f * density.density
 
-                            val scale = (1f - absOffset * 0.08f).coerceIn(0.80f, 1.04f)
-                            scaleX = scale
-                            scaleY = scale
-                            alpha = (1f - absOffset * 0.18f).coerceIn(0.55f, 1f)
-                        }
-                        .size(width = 175.dp, height = 212.dp)
-                        .shadow(
-                            elevation = if (isActive) 14.dp else 4.dp,
-                            shape = RoundedCornerShape(22.dp),
-                            ambientColor = if (isActive) platform.brandColor else Color.Black,
-                            spotColor = if (isActive) platform.brandColor else Color.Black
-                        )
-                        .clip(RoundedCornerShape(22.dp))
-                        .background(
-                            Brush.linearGradient(
-                                listOf(
-                                    platform.brandColor.copy(alpha = if (isActive) 0.36f else 0.20f),
-                                    Color.White.copy(alpha = 0.08f)
+                                val scale = (1f - absOffset * 0.10f).coerceIn(0.78f, 1.04f)
+                                scaleX = scale
+                                scaleY = scale
+                                // Side cards are slightly dimmer, back card completely fades
+                                alpha = (1f - (absOffset * 0.28f)).coerceIn(0.40f, 1f)
+                            }
+                            .size(width = 180.dp, height = 216.dp)
+                            .shadow(
+                                elevation = if (isActive) 16.dp else 4.dp,
+                                shape = RoundedCornerShape(24.dp),
+                                ambientColor = if (isActive) platform.brandColor else Color.Black,
+                                spotColor = if (isActive) platform.brandColor else Color.Black
+                            )
+                            .clip(RoundedCornerShape(24.dp))
+                            // Opaque solid dark background + brand tint: blocks cards behind from bleeding through!
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(
+                                        platform.brandColor.copy(alpha = if (isActive) 0.42f else 0.20f),
+                                        darkCardBase,
+                                        darkCardBase
+                                    )
                                 )
                             )
-                        )
-                        .border(
-                            width = if (isActive) 1.5.dp else 1.dp,
-                            color = if (isActive) platform.brandColor.copy(alpha = 0.85f) else Color.White.copy(alpha = 0.25f),
-                            shape = RoundedCornerShape(22.dp)
-                        )
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            selectedIndex = i
-                            isUserInteracted = true
-                        }
-                        .padding(14.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        // Header: App icon + Name + Status dot
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(28.dp)
-                                    .clip(CircleShape)
-                                    .background(platform.brandColor.copy(alpha = 0.35f)),
-                                contentAlignment = Alignment.Center
+                            .border(
+                                width = if (isActive) 1.5.dp else 1.dp,
+                                color = if (isActive) platform.brandColor.copy(alpha = 0.9f) else Color.White.copy(alpha = 0.16f),
+                                shape = RoundedCornerShape(24.dp)
+                            )
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
                             ) {
-                                Text(platform.icon, fontSize = 15.sp)
+                                selectedIndex = i
+                                isUserInteracted = true
                             }
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                text = platform.name,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .size(7.dp)
-                                    .clip(CircleShape)
-                                    .background(if (isActive) Color(0xFF00E676) else Color.White.copy(0.4f))
-                            )
-                        }
+                            .padding(14.dp)
+                    ) {
+                        if (isActive) {
+                            // ACTIVE CENTER CARD: Rich, detailed, focused content
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                // Header: Icon + Name + Active Pulse Dot + Status text
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(28.dp)
+                                            .clip(CircleShape)
+                                            .background(platform.brandColor.copy(alpha = 0.35f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(platform.icon, fontSize = 15.sp)
+                                    }
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = platform.name,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .size(7.dp)
+                                            .clip(CircleShape)
+                                            .background(Color(0xFF00E676))
+                                    )
+                                    Spacer(Modifier.width(4.dp))
+                                    Text(
+                                        text = platform.statusText,
+                                        color = Color.White.copy(alpha = 0.75f),
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
 
-                        // Mock Chat Preview Bubble with Sticker
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Color.White.copy(alpha = 0.12f))
-                                .border(1.dp, Color.White.copy(alpha = 0.18f), RoundedCornerShape(16.dp))
-                                .padding(vertical = 10.dp, horizontal = 10.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(platform.stickerEmoji, fontSize = 42.sp)
-                                Spacer(Modifier.height(4.dp))
-                                Text(
-                                    text = platform.stickerName,
-                                    color = Color.White.copy(alpha = 0.9f),
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 11.sp
-                                )
-                                Text(
-                                    text = platform.chatMessage,
-                                    color = Color.White.copy(alpha = 0.65f),
-                                    fontSize = 9.sp,
-                                    textAlign = TextAlign.Center,
-                                    maxLines = 1
-                                )
-                            }
-                        }
-
-                        // Bottom status pill
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(50))
-                                .background(
-                                    if (isActive) {
-                                        Brush.horizontalGradient(platform.gradientColors)
-                                    } else {
-                                        Brush.horizontalGradient(
-                                            listOf(Color.White.copy(0.12f), Color.White.copy(0.08f))
+                                // Mock Chat Bubble with Big Sticker Preview
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(Color.White.copy(alpha = 0.08f))
+                                        .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(16.dp))
+                                        .padding(vertical = 10.dp, horizontal = 8.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text(platform.stickerEmoji, fontSize = 44.sp)
+                                        Spacer(Modifier.height(4.dp))
+                                        Text(
+                                            text = platform.stickerName,
+                                            color = Color.White,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 12.sp
+                                        )
+                                        Text(
+                                            text = platform.chatMessage,
+                                            color = Color.White.copy(alpha = 0.65f),
+                                            fontSize = 9.sp,
+                                            textAlign = TextAlign.Center,
+                                            maxLines = 1
                                         )
                                     }
+                                }
+
+                                // Bottom action button
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(50))
+                                        .background(Brush.horizontalGradient(platform.gradientColors))
+                                        .padding(vertical = 5.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "✓ Xuất sang ${platform.name}",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 11.sp
+                                    )
+                                }
+                            }
+                        } else {
+                            // INACTIVE SIDE CARD: Minimalist, clean tab view (No clutter!)
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.SpaceBetween,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                // Header: Clean Icon + App Name only
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(28.dp)
+                                            .clip(CircleShape)
+                                            .background(platform.brandColor.copy(alpha = 0.35f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(platform.icon, fontSize = 15.sp)
+                                    }
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        text = platform.name,
+                                        color = Color.White.copy(alpha = 0.85f),
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp
+                                    )
+                                }
+
+                                // Center: Watermark subtle sticker emblem
+                                Text(
+                                    text = platform.stickerEmoji,
+                                    fontSize = 48.sp,
+                                    modifier = Modifier.graphicsLayer { alpha = 0.25f }
                                 )
-                                .padding(vertical = 4.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = if (isActive) "✓ ${platform.statusText}" else platform.name,
-                                color = Color.White,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 11.sp
-                            )
+
+                                // Bottom: Minimal hint
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(50))
+                                        .background(Color.White.copy(alpha = 0.08f))
+                                        .padding(horizontal = 10.dp, vertical = 3.dp)
+                                ) {
+                                    Text(
+                                        text = "Chạm để chọn",
+                                        color = Color.White.copy(alpha = 0.55f),
+                                        fontSize = 10.sp
+                                    )
+                                }
+                            }
                         }
                     }
                 }
