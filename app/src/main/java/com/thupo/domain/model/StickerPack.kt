@@ -1,5 +1,8 @@
 package com.thupo.domain.model
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class StickerPack(
     val id: Long = 0,
     val name: String,

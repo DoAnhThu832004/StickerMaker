@@ -1,6 +1,7 @@
 package com.thupo.presentation.screens.home.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.thupo.domain.model.StickerPack
+import com.thupo.presentation.screens.intro.components.GlassCard
 
 @Composable
 fun StickerPackCard(
@@ -27,14 +29,14 @@ fun StickerPackCard(
     onAddToWhatsAppClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
+    val cardShape = RoundedCornerShape(20.dp)
+    GlassCard(
+        shape = cardShape,
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onPackClick() },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
+            .clip(cardShape)
+            .clickable { onPackClick() }
+    )  {
         Column(modifier = Modifier.padding(14.dp)) {
             // Tên pack và badge
             Row(
@@ -48,6 +50,7 @@ fun StickerPackCard(
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    color = Color.White,
                     modifier = Modifier.weight(1f)
                 )
                 if (pack.isAnimated) {
@@ -75,12 +78,14 @@ fun StickerPackCard(
             ) {
                 for (i in 0 until 4) {
                     val uri = pack.stickers.getOrNull(i)
+                    val slotShape = RoundedCornerShape(12.dp)
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.background),
+                            .clip(slotShape)
+                            .background(Color.White.copy(alpha = 0.08f))
+                            .border(1.dp, Color.White.copy(alpha = 0.15f), slotShape),
                         contentAlignment = Alignment.Center
                     ) {
                         if (uri != null) {
@@ -88,10 +93,10 @@ fun StickerPackCard(
                                 model = uri,
                                 contentDescription = null,
                                 modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
+                                contentScale = ContentScale.Crop,
                             )
                         } else {
-                            Text(text = "➕", fontSize = 14.sp, color = Color.Gray)
+                            Text(text = "➕", fontSize = 14.sp, color = Color.White)
                         }
                     }
                 }
@@ -108,15 +113,20 @@ fun StickerPackCard(
                 Text(
                     text = "${pack.stickers.size}/30 stickers",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = Color.White
                 )
 
                 Button(
                     onClick = onAddToWhatsAppClick,
                     enabled = pack.canAddToWhatsApp,
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF25D366), // Màu xanh đặc trưng của WhatsApp
+                        disabledContainerColor = Color.White.copy(alpha = 0.12f),
+                        contentColor = Color.White,
+                        disabledContentColor = Color.White.copy(alpha = 0.4f)
+                    ),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 4.dp),
                     modifier = Modifier.height(34.dp)
                 ) {
                     Text(
