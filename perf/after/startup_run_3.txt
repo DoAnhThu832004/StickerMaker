@@ -1,0 +1,8 @@
+﻿Stopping: com.thupo
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.thupo/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.thupo/.MainActivity
+TotalTime: 311
+WaitTime: 314
+Complete

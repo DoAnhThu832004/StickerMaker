@@ -1,0 +1,44 @@
+﻿Threads: 39 total,   2 running,  37 sleeping,   0 stopped,   0 zombie
+  Mem:    11233M total,    10986M used,      246M free,        2M buffers
+ Swap:    12287M total,     3893M used,     8394M free,     3052M cached
+800%cpu 146%user   4%nice 157%sys 461%idle   0%iow  29%irq   4%sirq   0%host
+  TID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ THREAD          PROCESS
+27894 u0_a431      10 -10  15G 228M 158M R 71.4   2.0   0:14.59 RenderThread    com.thupo
+27662 u0_a431      10 -10  15G 228M 158M R 60.7   2.0   0:17.07 com.thupo       com.thupo
+27923 u0_a431      20   0  15G 228M 158M S  3.5   2.0   0:00.22 blastAsyncWork  com.thupo
+27922 u0_a431      20   0  15G 228M 158M S  3.5   2.0   0:00.13 binder:27662_4  com.thupo
+27847 u0_a431      29   9  15G 228M 158M S  3.5   2.0   0:02.74 Jit thread pool com.thupo
+27930 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 DefaultDispatch com.thupo
+27929 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 DefaultDispatch com.thupo
+27928 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 DefaultDispatch com.thupo
+27919 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.01 arch_disk_io_0  com.thupo
+27915 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 SurfaceSyncGrou com.thupo
+27913 u0_a431      10 -10  15G 228M 158M S  0.0   2.0   0:00.00 VsyncReceiver   com.thupo
+27911 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 DefaultDispatch com.thupo
+27912 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 DefaultDispatch com.thupo
+27910 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 DefaultDispatch com.thupo
+27904 u0_a431      10 -10  15G 228M 158M S  0.0   2.0   0:00.00 hwuiTask1       com.thupo
+27906 u0_a431      16  -4  15G 228M 158M S  0.0   2.0   0:00.00 RenderThread    com.thupo
+27903 u0_a431      10 -10  15G 228M 158M S  0.0   2.0   0:00.00 hwuiTask0       com.thupo
+27900 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 pool-3-thread-1 com.thupo
+27902 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 FramePredictIni com.thupo
+27901 u0_a431      10 -10  15G 228M 158M S  0.0   2.0   0:00.00 TracingMuxer    com.thupo
+27899 u0_a431      30  10  15G 228M 158M S  0.0   2.0   0:00.01 Binder:intercep com.thupo
+27897 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 AICollector     com.thupo
+27887 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 AppCustomScenar com.thupo
+27886 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 Timer-1         com.thupo
+27885 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 Timer-0         com.thupo
+27884 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 MiuiMonitorThre com.thupo
+27882 u0_a431      29   9  15G 228M 158M S  0.0   2.0   0:00.04 Profile Saver   com.thupo
+27873 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 binder:27662_3  com.thupo
+27874 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 27662-ScoutStat com.thupo
+27846 u0_a431       0 -20  15G 228M 158M S  0.0   2.0   0:00.00 ADB-JDWP Connec com.thupo
+27861 u0_a431      24   4  15G 228M 158M S  0.0   2.0   0:00.05 ReferenceQueueD com.thupo
+27860 u0_a431      24   4  15G 228M 158M S  0.0   2.0   0:00.09 HeapTaskDaemon  com.thupo
+27871 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.00 dex_preload_t   com.thupo
+27870 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.13 binder:27662_2  com.thupo
+27865 u0_a431      20   0  15G 228M 158M S  0.0   2.0   0:00.93 binder:27662_1  com.thupo
+27863 u0_a431      24   4  15G 228M 158M S  0.0   2.0   0:00.00 FinalizerWatchd com.thupo
+27862 u0_a431      24   4  15G 228M 158M S  0.0   2.0   0:00.00 FinalizerDaemon com.thupo
+27844 u0_a431       0 -20  15G 228M 158M S  0.0   2.0   0:00.00 Signal Catcher  com.thupo
+27845 u0_a431       0 -20  15G 228M 158M S  0.0   2.0   0:00.00 perfetto_hprof_ com.thupo

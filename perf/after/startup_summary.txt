@@ -1,0 +1,1 @@
+﻿Startup runs (after): 309, 295, 311, 352, 309 ms. Median: 309 ms

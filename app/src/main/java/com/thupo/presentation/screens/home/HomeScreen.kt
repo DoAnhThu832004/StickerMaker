@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thupo.domain.model.StickerPack
@@ -107,11 +108,12 @@ fun HomeContent(
                         key = { it.id },
                         contentType = { CONTENT_TYPE_STICKER_PACK }
                     ) { pack ->
+                        val context = LocalContext.current
                         val onPackClick = remember(pack.id, onNavigateToPackDetail) {
                             { onNavigateToPackDetail(pack.id) }
                         }
-                        val onAddToWhatsAppClick = remember(pack.id) {
-                            { /* TODO: Luồng export WA */ }
+                        val onAddToWhatsAppClick = remember(pack, context) {
+                            { com.thupo.core.whatsapp.WhatsAppStickerHelper.addToWhatsApp(context, pack) }
                         }
 
                         StickerPackCard(

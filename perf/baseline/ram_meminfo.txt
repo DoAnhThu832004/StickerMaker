@@ -1,0 +1,69 @@
+﻿Applications Memory Usage (in Kilobytes):
+Uptime: 1351218930 Realtime: 2187183535
+
+** MEMINFO in pid 26477 [com.thupo] **
+                   Pss  Private  Private  SwapPss      Rss     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------   ------
+  Native Heap    31476    31336       84       81    32912    56160    32812    19507
+  Dalvik Heap    73456    18296    55140       67    74520    30706     6130    24576
+ Dalvik Other    11973     5856       16        0    18184                           
+        Stack     1368     1368        0        0     1376                           
+       Ashmem       24        0        0        0     1536                           
+      Gfx dev     6136     6136        0        0     6140                           
+    Other dev       28        0       20        0     1176                           
+     .so mmap     2611      504      144        2    46376                           
+    .jar mmap     1975        0      440        0    53332                           
+    .apk mmap      188        0       16        0     2216                           
+    .ttf mmap      693        0      208        0     4396                           
+    .dex mmap       58        0        0        0     1384                           
+    .oat mmap       13        0        0        0     2196                           
+    .art mmap     7921     7572      124       37    18096                           
+   Other mmap     3392       36       36        0     7916                           
+   EGL mtrack    28016    28016        0        0    28016                           
+    GL mtrack      384      384        0        0      384                           
+      Unknown    71434    71332       84        1    72200                           
+        TOTAL   241334   170836    56312      188   372356    86866    38942    44083
+ 
+ App Summary
+                       Pss(KB)                        Rss(KB)
+                        ------                         ------
+           Java Heap:    25992                          92616
+         Native Heap:    31336                          32912
+                Code:     1440                         122228
+               Stack:     1368                           1376
+            Graphics:    34536                          34540
+       Private Other:   132476
+              System:    14186
+             Unknown:                                   88684
+ 
+           TOTAL PSS:   241334            TOTAL RSS:   372356       TOTAL SWAP PSS:      188
+ 
+ Objects
+               Views:        8         ViewRootImpl:        1
+         AppContexts:        5           Activities:        1
+              Assets:       36        AssetManagers:        0
+       Local Binders:       24        Proxy Binders:       85
+       Parcel memory:       11         Parcel count:       44
+    Death Recipients:        2             WebViews:        0
+ 
+ Native Allocations
+                         Count                       Total(kB)
+                        ------                         ------
+    Other (malloced):     1202                            113
+ Other (nonmalloced):      115                             89
+   Bitmap (malloced):       80                           5301
+ 
+ SQL
+         MEMORY_USED:      171
+  PAGECACHE_OVERFLOW:       45          MALLOC_SIZE:       46
+ 
+ DATABASES
+      pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
+PER CONNECTION STATS
+         4       24             27     1    29     3  /data/user/0/com.thupo/databases/sticker_maker.db
+         4        8                    0     0     0    (attached) temp
+         4       24             33     1    14     2  /data/user/0/com.thupo/databases/sticker_maker.db (2)
+POOL STATS
+     cache hits  cache misses    cache size  Dbname
+              4            64            68  /data/user/0/com.thupo/databases/sticker_maker.db
