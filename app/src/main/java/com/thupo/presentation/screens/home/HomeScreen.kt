@@ -7,10 +7,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +29,7 @@ import com.thupo.presentation.screens.home.components.RadialFloatingActionButton
 import com.thupo.presentation.screens.home.components.StickerPackCard
 import com.thupo.presentation.screens.home.components.StickerTitle
 import com.thupo.presentation.screens.intro.components.AuroraGlow
+import com.thupo.presentation.screens.intro.components.GlassCard
 import com.thupo.presentation.screens.intro.components.NavyDark
 import com.thupo.presentation.screens.intro.components.NavyMid
 
@@ -33,7 +38,8 @@ private const val CONTENT_TYPE_STICKER_PACK = "sticker_pack_item"
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
-    onNavigateToPackDetail: (Long) -> Unit = {}
+    onNavigateToPackDetail: (Long) -> Unit = {},
+    onSettingsClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -41,6 +47,7 @@ fun HomeScreen(
         uiState = uiState,
         onEvent = viewModel::onEvent,
         onNavigateToPackDetail = onNavigateToPackDetail,
+        onSettingsClick = onSettingsClick,
         modifier = modifier
     )
 }
@@ -50,6 +57,7 @@ fun HomeContent(
     uiState: HomeUiState,
     onEvent: (HomeUiEvent) -> Unit,
     onNavigateToPackDetail: (Long) -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val backgroundBrush = remember {
@@ -68,6 +76,25 @@ fun HomeContent(
                         text = "STICKER MAKER",
                         textSizeDp = 19.dp
                     )
+                },
+                actions = {
+                    GlassCard(
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                onSettingsClick()
+                            },
+                        shape = CircleShape
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Cài đặt",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
@@ -163,12 +190,13 @@ private fun EmptyStickerView(modifier: Modifier = Modifier) {
         Text(
             text = "Chưa có bộ sticker nào",
             style = MaterialTheme.typography.titleMedium,
+            color = Color.White,
             fontWeight = FontWeight.SemiBold
         )
         Text(
             text = "Nhấn nút (+) bên dưới để bắt đầu tạo sticker đầu tiên!",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+            color = Color.White.copy(0.6f)
         )
     }
 }
@@ -186,7 +214,8 @@ fun HomeScreenPreview() {
         HomeContent(
             uiState = HomeUiState(stickerPacks = samplePacks),
             onEvent = {},
-            onNavigateToPackDetail = {}
+            onNavigateToPackDetail = {},
+            onSettingsClick = {}
         )
     }
 }

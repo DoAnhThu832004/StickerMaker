@@ -23,6 +23,7 @@ import com.thupo.presentation.screens.pack_detail.PackDetailScreen
 import com.thupo.presentation.screens.home.HomeScreen
 import com.thupo.presentation.screens.intro.IntroScreen
 import com.thupo.presentation.screens.intro.components.AuroraGlow
+import com.thupo.presentation.screens.setting.SettingScreen
 import com.thupo.presentation.screens.splash.SplashDestinationTransition
 import com.thupo.presentation.screens.splash.SplashUiState
 import com.thupo.presentation.screens.splash.SplashViewModel
@@ -64,7 +65,15 @@ fun AppNavHost(
                         HomeScreen(
                             onNavigateToPackDetail = { packId ->
                                 navController.navigate(Screen.PackDetail.createRoute(packId))
+                            },
+                            onSettingsClick = {
+                                navController.navigate(Screen.Setting.route)
                             }
+                        )
+                    }
+                    composable(Screen.Setting.route) {
+                        SettingScreen(
+                            onNavigateBack = { navController.popBackStack() }
                         )
                     }
                     composable(
