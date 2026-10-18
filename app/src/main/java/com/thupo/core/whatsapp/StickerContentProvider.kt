@@ -158,13 +158,14 @@ class StickerContentProvider : ContentProvider() {
         val match = uriMatcher.match(uri)
         if (match == STICKERS_ASSET) {
             val segments = uri.pathSegments
-            if (segments.size >= 3) {
+                val packId = segments[1]
                 val fileName = segments[2]
-                val file = File(context?.filesDir, fileName)
-                if (file.exists()) {
+                val file = File(context?.filesDir, "stickers/$packId/$fileName").takeIf { it.exists() }
+                    ?: File(context?.filesDir, fileName).takeIf { it.exists() }
+                if (file != null) {
                     return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
                 }
-            }
+
         }
         throw FileNotFoundException("File not found for URI: $uri")
     }
