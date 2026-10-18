@@ -17,6 +17,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.thupo.presentation.screens.pack_detail.PackDetailScreen
 import com.thupo.presentation.screens.home.HomeScreen
 import com.thupo.presentation.screens.intro.IntroScreen
 import com.thupo.presentation.screens.intro.components.AuroraGlow
@@ -58,7 +61,21 @@ fun AppNavHost(
                         )
                     }
                     composable(Screen.Home.route) {
-                        HomeScreen()
+                        HomeScreen(
+                            onNavigateToPackDetail = { packId ->
+                                navController.navigate(Screen.PackDetail.createRoute(packId))
+                            }
+                        )
+                    }
+                    composable(
+                        route = Screen.PackDetail.route,
+                        arguments = listOf(
+                            navArgument("packId") { type = NavType.LongType }
+                        )
+                    ) {
+                        PackDetailScreen(
+                            onBack = { navController.popBackStack() }
+                        )
                     }
                 }
             }
