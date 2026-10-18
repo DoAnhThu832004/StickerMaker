@@ -1,5 +1,11 @@
 # 🎨 Sticker Maker (Tạo & Quản Lý Nhãn Dán Trực Quan Cho WhatsApp & Chat Apps) 📱
 
+[![Android CI/CD](https://github.com/DoAnhThu832004/StickerMaker/actions/workflows/android.yml/badge.svg)](https://github.com/DoAnhThu832004/StickerMaker/actions/workflows/android.yml)
+![Platform](https://img.shields.io/badge/Platform-Android-green.svg)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.2.10-blue.svg)
+![Compose](https://img.shields.io/badge/Jetpack%20Compose-2026.02.01-4285F4.svg)
+![License](https://img.shields.io/badge/License-MIT-orange.svg)
+
 Ứng dụng Android hỗ trợ tạo, quản lý các bộ sticker tĩnh & động từ ảnh cá nhân và tích hợp xuất trực tiếp sang **WhatsApp** theo chuẩn WhatsApp Sticker API, được xây dựng theo kiến trúc **Clean Architecture** với **Jetpack Compose Material 3** hiện đại.
 
 ---
@@ -9,6 +15,36 @@
 **Sticker Maker** là giải pháp sáng tạo và cá nhân hóa nhãn dán toàn diện trên nền tảng Android. Ứng dụng giúp người dùng nhanh chóng chuyển đổi những khoảnh khắc, ảnh kỷ niệm, meme hoặc hình ảnh yêu thích thành các bộ sưu tập sticker sống động và sẵn sàng chia sẻ vào các cuộc trò chuyện trên **WhatsApp**, **Zalo**, **Telegram**.
 
 Không chỉ chú trọng vào sự tiện dụng, **Sticker Maker** được thiết kế với phong cách đồ họa hiện đại mang tính thẩm mỹ cao: hiệu ứng cực quang **Aurora Glow**, bề mặt kính mờ trong suốt (**Glassmorphism**), hiệu ứng chuyển cảnh khởi động điện ảnh 6 pha 3D (**Cinematic 3D Splash**), menu điều hướng hướng tâm bung nan quạt tương tác mượt mà (**Radial Floating Action Button**) cùng hộp thoại đánh giá cảm xúc biến hình sống động (**Satisfaction Slider Dialog**).
+
+---
+
+## 🎬 Video Demo & Trải nghiệm (Demo & Preview)
+
+<div align="center">
+
+> 💡 *Dưới đây là video / ảnh động mô phỏng giao diện và trải nghiệm thực tế của ứng dụng.*
+
+<!-- Cách 1: Video MP4 / WebM phát trực tiếp trên GitHub -->
+<!-- Bạn có thể kéo thả file video .mp4 vào khung soạn thảo GitHub Issue/PR hoặc tải lên thư mục docs/ rồi dán link vào đây -->
+<video src="docs/demo.mp4" controls="controls" width="340" style="max-height: 600px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+  Trình duyệt của bạn không hỗ trợ thẻ video.
+</video>
+
+<!-- Cách 2 (Khuyên dùng): File GIF động tự động phát lặp lại -->
+<!--
+<img src="docs/demo.gif" width="320" alt="Sticker Maker Demo GIF" style="border-radius: 16px;" />
+-->
+
+<!-- Cách 3: Video YouTube nếu upload lên YouTube -->
+<!--
+[![Xem Video Demo Trên YouTube](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
+-->
+
+<p align="center">
+  <i>Giao diện Glassmorphism, Splash 6 pha 3D, FAB nan quạt hướng tâm và tính năng xuất trực tiếp sang WhatsApp</i>
+</p>
+
+</div>
 
 ---
 
@@ -228,6 +264,68 @@ com.thupo/
 | **Xử lý bất đồng bộ** | Kotlin Coroutines & Reactive Flow | `1.9.0` |
 | **Tích hợp WhatsApp** | Android ContentProvider & WhatsApp Sticker API | - |
 | **Build Tool** | Android Gradle Plugin (AGP) / KSP | `9.1.1` / `2.2.10-2.0.2` |
+
+---
+
+## 🔄 Quy trình DevOps & Tự động hóa CI/CD (DevOps & Automation Pipeline)
+
+Dự án áp dụng quy trình thực hành kỹ thuật DevOps hiện đại từ khâu kiểm thử mã nguồn, tối ưu hóa kích thước build đến tự động hóa triển khai và phân tích hiệu năng thực nghiệm:
+
+```
+                  ┌──────────────────────────────────────────┐
+                  │          Git Push / Pull Request         │
+                  └────────────────────┬─────────────────────┘
+                                       │
+                  ┌────────────────────▼─────────────────────┐
+                  │        GitHub Actions CI Pipeline        │
+                  │   - Ubuntu Runner + JDK 21 (Temurin)     │
+                  │   - Gradle Build Cache (setup-gradle@v4) │
+                  │   - Concurrency: cancel-in-progress      │
+                  └────────────────────┬─────────────────────┘
+                                       │
+       ┌───────────────────────────────┼───────────────────────────────┐
+       │                               │                               │
+┌──────▼──────┐                ┌───────▼────────┐             ┌────────▼────────┐
+│ Android Lint│                │Unit Test Suite │             │  Build Release  │
+│ (lintDebug) │                │(testDebugUnit) │             │ (assembleDebug) │
+└──────┬──────┘                └───────┬────────┘             └────────┬────────┘
+       │                               │                               │
+       └───────────────────────────────┼───────────────────────────────┘
+                                       │
+                  ┌────────────────────▼─────────────────────┐
+                  │    Automated Artifact Delivery (v4)      │
+                  │   - Upload app-debug.apk (5 days cache)  │
+                  └──────────────────────────────────────────┘
+```
+
+### 1. 🤖 CI/CD Automation (GitHub Actions)
+* **Kích hoạt tự động (Triggers):** Tự động khởi chạy pipeline kiểm tra khi có `push` hoặc `pull_request` trên các nhánh chính (`main`, `master`).
+* **Quản lý tài nguyên đồng thời (Concurrency Control):** Thiết lập `cancel-in-progress: true` để tự động hủy các tác vụ build cũ khi lập trình viên đẩy commit mới lên cùng nhánh, tiết kiệm tối đa tài nguyên runner.
+* **Môi trường & Bộ nhớ đệm (Environment & Caching):**
+  * Runner môi trường ảo hóa `ubuntu-latest`.
+  * Khởi tạo **OpenJDK 21** (`Eclipse Temurin`) đồng bộ với Gradle Daemon JVM.
+  * Tích hợp **Gradle Build Action** (`gradle/actions/setup-gradle@v4`) lưu trữ bộ đệm dependencies và build cache, giảm thời gian build qua từng lần commit.
+* **Kiểm định chất lượng tĩnh & Kiểm thử (Quality Gates & Testing):**
+  * **Android Lint (`lintDebug`):** Tự động phát hiện lỗi tiềm ẩn, kiểm tra tương thích API, quy chuẩn giao diện và tối ưu tài nguyên.
+  * **Unit Tests (`testDebugUnitTest`):** Chạy toàn bộ bộ test case kiểm thử logic miền và UseCase.
+* **Phân phối sản phẩm tự động (Artifact Upload):** Tự động đóng gói và xuất file `app-debug.apk` thông qua `actions/upload-artifact@v4` với thời gian lưu trữ 5 ngày cho các lượt push lên nhánh chính.
+
+---
+
+### 2. ⚡ Tối ưu hóa Bản dựng (Build Optimization & R8 Full Mode)
+* **R8 Code Shrinker ở chế độ Full Mode:** Kích hoạt `android.enableR8.fullMode=true` trong `gradle.properties` kết hợp `isMinifyEnabled = true` và `isShrinkResources = true` để loại bỏ mã thừa (dead code), làm gọn tên lớp/hàm và giảm dung lượng APK tới mức tối thiểu.
+* **KSP (Kotlin Symbol Processing):** Biên dịch và sinh mã trực tiếp bằng KSP cho Room Database (`arg("room.generateKotlin", "true")`), tăng tốc độ biên dịch gấp 2 lần so với KAPT truyền thống.
+* **Cấu hình Daemon tối ưu:** `org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8` đảm bảo tiến trình Gradle vận hành mượt mà, tránh lỗi thiếu bộ nhớ khi xử lý đồ họa vector và tài nguyên lớn.
+
+---
+
+### 3. 📊 Kỹ thuật Hiệu năng & Đo kiểm Thực nghiệm (Performance Telemetry)
+Dự án duy trì bộ công cụ phân tích và đo lường hiệu năng (`perf/`) giúp so sánh sự biến thiên hiệu năng trước và sau khi tối ưu hóa (**Baseline vs. After**):
+* **Đo thời gian khởi động (Startup Benchmark):** Thu thập dữ liệu khởi động qua 5 chu kỳ lặp lại (`startup_run_1.txt` $\rightarrow$ `startup_run_5.txt`) để tổng hợp chỉ số thời gian Cold / Warm Start (`startup_summary.txt`).
+* **Hồ sơ bộ nhớ (RAM / Memory Profiling):** Phân tích chi tiết mức tiêu thụ bộ nhớ Dalvik Heap, Native Heap và Graphics qua `adb shell dumpsys meminfo` (`ram_meminfo.txt`).
+* **Tốc độ khung hình & Khử giật hình (Rendering & Jank Analysis):** Đếm số khung hình bị trễ (Janky Frames) và phân tích độ trễ Render 90th/95th/99th percentile qua `adb shell dumpsys gfxinfo` (`render_gfxinfo.txt`).
+* **Nhiệt độ & Năng lượng (Thermal & Battery Stats):** Giám sát mức tiêu hao pin thiết bị qua `batterystats` (`battery.txt`) và kiểm soát hiện tượng nghẽn nhiệt qua `thermal.txt`.
+* **Thực nghiệm biên dịch AOT (ART Compilation):** Thử nghiệm và đánh giá tốc độ xử lý khi biên dịch trước toàn bộ mã máy qua lệnh `adb shell cmd package compile -m speed -f com.thupo` so với chế độ `verify`.
 
 ---
 
