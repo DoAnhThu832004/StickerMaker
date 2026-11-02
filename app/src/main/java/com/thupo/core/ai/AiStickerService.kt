@@ -31,9 +31,41 @@ class AiStickerService @Inject constructor() {
     private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
 
     /**
-     * Gọi AI để sinh ảnh Sprite Sheet lớn.
-     * Kiến trúc Resilience: Thử Google Imagen 3 trước, nếu gặp lỗi 404 (chưa kích hoạt Billing Google Cloud)
-     * thì tự động Fallback sang FLUX Engine miễn phí để đảm bảo 100% người dùng luôn tạo được ảnh!
+     * Gọi Spring Boot AI Gateway (Phase 3 Clean Architecture):
+     * Backend che giấu API key, bảo vệ quota, và trả về ảnh Sprite Sheet.
+     * @param gatewayBaseUrl URL của Spring Boot (mặc định http://10.0.2.2:8080 trên Android Emulator)
+     */
+    suspend fun generateFromGateway(
+        userPrompt: String,
+        rows: Int = 2,
+        cols: Int = 2,
+        gatewayBaseUrl: String = "http://10.0.2.2:8080"
+    ): Bitmap = withContext(Dispatchers.IO) {
+        val requestJson = JsonObject().apply {
+            addProperty("prompt", userPrompt)
+            addProperty("rows", rows)
+            addProperty("cols", cols)
+        }
+
+        val request = Request.Builder()
+            .url("$gatewayBaseUrl/api/v1/stickers/spritesheet")
+            .post(requestJson.toString().toRequestBody(jsonMediaType))
+            .build()
+
+        val response = client.newCall(request).execute()
+        if (!response.isSuccessful) {
+            throw IOException("Lỗi Gateway (${response.code}): ${response.message}")
+        }
+
+        val bytes = response.body?.bytes() ?: throw IOException("Dữ liệu ảnh từ Gateway rỗng")
+        return@withContext BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            ?: throw IOException("Không thể giải mã dữ liệu ảnh thành Bitmap")
+    }
+
+    /**
+     * Gọi AI để sinh ảnh Sprite Sheet lớn trực tiếp từ Client (Fallback/Dev).
+     * Kiến trúc Resilience: Thử Google Imagen 3 trước, nếu gặp lỗi 404
+     * thì tự động Fallback sang FLUX Engine miễn phí.
      */
     suspend fun generateSpriteSheet(
         prompt: String,

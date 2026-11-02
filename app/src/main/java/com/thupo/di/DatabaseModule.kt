@@ -2,6 +2,7 @@ package com.thupo.di
 
 import android.content.Context
 import androidx.room.Room
+import com.thupo.core.image.SpriteSheetSplitter
 import com.thupo.core.image.StickerImageProcessor
 import com.thupo.data.local.AppDatabase
 import com.thupo.data.local.dao.StickerPackDao
@@ -32,9 +33,16 @@ object DatabaseModule {
     fun provideStickerPackDao(database: AppDatabase): StickerPackDao {
         return database.stickerPackDao()
     }
+
     @Provides
     @Singleton
     fun provideStickerImageProcessor(@ApplicationContext context: Context): StickerImageProcessor {
         return StickerImageProcessor(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSpriteSheetSplitter(processor: StickerImageProcessor): SpriteSheetSplitter {
+        return SpriteSheetSplitter(processor)
     }
 }

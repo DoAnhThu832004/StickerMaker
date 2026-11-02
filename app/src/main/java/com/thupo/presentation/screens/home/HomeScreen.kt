@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thupo.domain.model.StickerPack
+import com.thupo.presentation.screens.home.components.CreateAvatarDialog
 import com.thupo.presentation.screens.home.components.CreatePackDialog
 import com.thupo.presentation.screens.home.components.CreateWithAiDialog
 import com.thupo.presentation.screens.home.components.RadialFloatingActionButton
@@ -53,6 +55,7 @@ fun HomeScreen(
         onNavigateToPackDetail = onNavigateToPackDetail,
         onSettingsClick = onSettingsClick,
         generateAiPackUseCase = viewModel.generateAiPackUseCase,
+        generateAvatarPackUseCase = viewModel.generateAvatarPackUseCase,
         modifier = modifier
     )
 }
@@ -65,6 +68,7 @@ fun HomeContent(
     onNavigateToPackDetail: (Long) -> Unit,
     onSettingsClick: () -> Unit,
     generateAiPackUseCase: com.thupo.domain.usecase.GenerateAiPackUseCase? = null,
+    generateAvatarPackUseCase: com.thupo.domain.usecase.GenerateAvatarPackUseCase? = null,
     modifier: Modifier = Modifier
 ) {
     val backgroundBrush = remember {
@@ -72,6 +76,7 @@ fun HomeContent(
     }
     val scrimInteractionSource = remember { MutableInteractionSource() }
     var showAiDialog by remember { mutableStateOf(false) }
+    var showAvatarDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier
@@ -87,7 +92,26 @@ fun HomeContent(
                     )
                 },
                 actions = {
-                    // Nút Tạo Sticker bằng AI
+                    // Nút Biến ảnh thành Avatar Chibi (Phase 5)
+                    GlassCard(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .clickable { showAvatarDialog = true },
+                        shape = CircleShape
+                    ) {
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Icon(
+                                imageVector = Icons.Default.Face,
+                                contentDescription = "Tạo Avatar Chibi",
+                                tint = Color(0xFFF368E0),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+
+                    // Nút Tạo Sticker từ văn bản (Phase 3)
                     GlassCard(
                         modifier = Modifier
                             .padding(end = 8.dp)
@@ -219,6 +243,17 @@ fun HomeContent(
             }
         )
     }
+
+    if (showAvatarDialog && generateAvatarPackUseCase != null) {
+        CreateAvatarDialog(
+            useCase = generateAvatarPackUseCase,
+            onDismiss = { showAvatarDialog = false },
+            onSuccess = { newPackId ->
+                showAvatarDialog = false
+                onNavigateToPackDetail(newPackId)
+            }
+        )
+    }
 }
 
 @Composable
@@ -236,7 +271,7 @@ private fun EmptyStickerView(modifier: Modifier = Modifier) {
             fontWeight = FontWeight.SemiBold
         )
         Text(
-            text = "Nhấn nút (+) bên dưới hoặc biểu tượng ✨ để tạo sticker bằng AI!",
+            text = "Nhấn nút (+) bên dưới hoặc biểu tượng ✨ / 👤 để tạo sticker bằng AI!",
             style = MaterialTheme.typography.bodyMedium,
             color = Color.White.copy(0.6f)
         )

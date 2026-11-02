@@ -86,7 +86,7 @@ class StickerImageProcessor(private val context: Context) {
 
     /**
      * Bước 3: Tạo viền trắng (White Stroke) bằng Canvas & BlurMaskFilter thuần.
-     * @param strokeWidthDp Độ dày của viền (ví dụ: 10f đến 16f)
+     * @param strokeWidth Độ dày của viền (ví dụ: 10f đến 16f)
      */
     fun addStickerOutline(source: Bitmap, strokeWidth: Float = 14f): Bitmap {
         // 1. Tạo viền mở rộng: Thêm padding xung quanh để khi viền nở ra không bị cụt ở mép
@@ -115,6 +115,30 @@ class StickerImageProcessor(private val context: Context) {
         canvas.drawBitmap(source, padding.toFloat(), padding.toFloat(), null)
 
         return outputBitmap
+    }
+
+    /**
+     * Quy trình hậu kỳ hoàn chỉnh một nhãn dán:
+     * 1. Bo viền trắng die-cut (addStickerOutline)
+     * 2. Resize và đặt vào giữa khung vuông trong suốt chuẩn 512x512
+     */
+    fun process(source: Bitmap, strokeWidth: Float = 14f): Bitmap {
+        val outlined = addStickerOutline(source, strokeWidth)
+        val targetSize = 512
+        val scale = min(targetSize.toFloat() / outlined.width, targetSize.toFloat() / outlined.height)
+        val scaledWidth = (outlined.width * scale).toInt().coerceAtLeast(1)
+        val scaledHeight = (outlined.height * scale).toInt().coerceAtLeast(1)
+
+        val resizedBitmap = Bitmap.createScaledBitmap(outlined, scaledWidth, scaledHeight, true)
+        val finalSquare = Bitmap.createBitmap(targetSize, targetSize, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(finalSquare)
+        val left = (targetSize - scaledWidth) / 2f
+        val top = (targetSize - scaledHeight) / 2f
+        canvas.drawBitmap(resizedBitmap, left, top, null)
+
+        if (outlined !== source) outlined.recycle()
+        if (resizedBitmap !== finalSquare && resizedBitmap !== outlined) resizedBitmap.recycle()
+        return finalSquare
     }
 
     /**

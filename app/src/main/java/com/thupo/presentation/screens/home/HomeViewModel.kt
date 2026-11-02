@@ -15,7 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val stickerRepository: StickerRepository,
-    val generateAiPackUseCase: com.thupo.domain.usecase.GenerateAiPackUseCase
+    val generateAiPackUseCase: com.thupo.domain.usecase.GenerateAiPackUseCase,
+    val generateAvatarPackUseCase: com.thupo.domain.usecase.GenerateAvatarPackUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState())
     val uiState : StateFlow<HomeUiState> = _uiState.asStateFlow()
