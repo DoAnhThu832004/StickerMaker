@@ -2,6 +2,7 @@ package com.thupo.data.repository
 
 import android.content.Context
 import android.net.Uri
+import com.thupo.core.image.StickerImageProcessor
 import com.thupo.data.local.dao.StickerPackDao
 import com.thupo.data.local.entity.StickerPackEntity
 import com.thupo.domain.model.StickerPack
@@ -18,7 +19,8 @@ import javax.inject.Singleton
 @Singleton
 class StickerRepositoryImpl @Inject constructor(
     private val dao: StickerPackDao,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val imageProcessor: StickerImageProcessor
 ): StickerRepository {
     override fun getAllPacks(): Flow<List<StickerPack>> {
         return dao.getAllPacks().map { entities ->
@@ -82,22 +84,43 @@ class StickerRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun saveImageToInternalStorage(packId: Long, uriString: String): String? {
-        return try {
+    private suspend fun saveImageToInternalStorage(
+        packId: Long,
+        uriString: String,
+        applyAiCutout: Boolean = true // Flag bật/tắt AI
+    ): String? = withContext(Dispatchers.IO) {
+        try {
             val uri = Uri.parse(uriString)
             val stickerDir = File(context.filesDir, "stickers/$packId").apply { mkdirs() }
             val fileName = "sticker_${System.currentTimeMillis()}_${(1000..9999).random()}.webp"
             val destFile = File(stickerDir, fileName)
 
-            context.contentResolver.openInputStream(uri)?.use { input ->
-                destFile.outputStream().use { output ->
-                    input.copyTo(output)
+            if (applyAiCutout) {
+                // 1. Đọc Bitmap
+                val rawBitmap = imageProcessor.loadBitmapFromUri(uri) ?: return@withContext null
+
+                // 2. Tách nền bằng ML Kit
+                val cutoutBitmap = imageProcessor.removeBackground(rawBitmap)
+
+                // 3. Vẽ viền trắng
+                val stickerWithStroke = imageProcessor.addStickerOutline(cutoutBitmap, strokeWidth = 12f)
+
+                // 4. Chuẩn hóa 512x512 WebP
+                val webpBytes = imageProcessor.formatToWhatsAppSticker(stickerWithStroke)
+
+                // 5. Ghi file
+                destFile.writeBytes(webpBytes)
+            } else {
+                // Nếu không dùng AI thì ghi file bình thường như cũ
+                context.contentResolver.openInputStream(uri)?.use { input ->
+                    destFile.outputStream().use { output -> input.copyTo(output) }
                 }
             }
+
             destFile.absolutePath
         } catch (e: Exception) {
             e.printStackTrace()
             null
         }
     }
-}
+}

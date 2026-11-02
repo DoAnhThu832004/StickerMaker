@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.thupo.domain.model.StickerPack
 import com.thupo.domain.repository.StickerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +19,8 @@ class PackDetailViewModel @Inject constructor(
     private val repository: StickerRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
+    private val _isProcessing = MutableStateFlow(false)
+    val isProcessing: StateFlow<Boolean> = _isProcessing.asStateFlow()
     private val packId: Long = when (val id = savedStateHandle.get<Any>("packId")) {
         is Long -> id
         is String -> id.toLong()
@@ -34,7 +37,12 @@ class PackDetailViewModel @Inject constructor(
 
     fun addSticker(uri: String) {
         viewModelScope.launch {
-            repository.addStickerToPack(packId, uri)
+            _isProcessing.value = true // Bật cờ: "Bắt đầu chạy AI rồi đấy!"
+            try {
+                repository.addStickerToPack(packId, uri)
+            } finally {
+                _isProcessing.value = false // Tắt cờ: Dù thành công hay lỗi cũng phải tắt loading
+            }
         }
     }
 

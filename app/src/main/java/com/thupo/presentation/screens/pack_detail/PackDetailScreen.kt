@@ -43,6 +43,7 @@ fun PackDetailScreen(
     onBack: () -> Unit
 ) {
     val pack by viewModel.pack.collectAsStateWithLifecycle()
+    val isProcessing by viewModel.isProcessing.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -226,6 +227,39 @@ fun PackDetailScreen(
                 }
             }
         )
+    }
+    // Hiển thị vòng xoay Loading khi AI đang tách nền
+    if (isProcessing) {
+        androidx.compose.ui.window.Dialog(
+            onDismissRequest = { /* Không cho người dùng bấm ra ngoài để tắt trong lúc đang xử lý */ }
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(160.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(Color(0xFF1E293B).copy(alpha = 0.9f)), // Màu tối mờ sang trọng
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    CircularProgressIndicator(
+                        color = Color(0xFF6C5CE7), // Màu tím gradient của app
+                        strokeWidth = 3.dp,
+                        modifier = Modifier.size(42.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "✨ Đang tạo sticker...",
+                        color = Color.White,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+        }
     }
 }
 
