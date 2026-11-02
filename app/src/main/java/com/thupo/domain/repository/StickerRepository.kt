@@ -10,6 +10,7 @@ interface StickerRepository {
     suspend fun deletePack(pack: StickerPack)
     suspend fun renamePack(packId: Long, newName: String)
     suspend fun addStickerToPack(packId: Long, stickerUri: String)
+    suspend fun addStickerItemToPack(packId: Long, item: com.thupo.domain.model.StickerItem)
     suspend fun removeStickerFromPack(packId: Long, stickerUri: String)
     suspend fun updateStickerEmojis(packId: Long, filePath: String, newEmojis: List<String>)
 }

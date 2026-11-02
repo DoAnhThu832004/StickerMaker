@@ -113,6 +113,12 @@ class StickerRepositoryImpl @Inject constructor(
         dao.update(entity.copy(stickers = updatedStickers, updatedAt = System.currentTimeMillis()))
     }
 
+    override suspend fun addStickerItemToPack(packId: Long, item: com.thupo.domain.model.StickerItem) {
+        val entity = dao.getPackByIdOneShot(packId) ?: return
+        val updatedStickers = entity.stickers + item
+        dao.update(entity.copy(stickers = updatedStickers, updatedAt = System.currentTimeMillis()))
+    }
+
     private suspend fun saveImageToInternalStorage(
         packId: Long,
         uriString: String,

@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,14 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thupo.domain.model.StickerPack
 import com.thupo.presentation.screens.home.components.CreatePackDialog
+import com.thupo.presentation.screens.home.components.CreateWithAiDialog
 import com.thupo.presentation.screens.home.components.RadialFloatingActionButton
 import com.thupo.presentation.screens.home.components.StickerPackCard
 import com.thupo.presentation.screens.home.components.StickerTitle
@@ -34,6 +37,7 @@ import com.thupo.presentation.screens.intro.components.NavyDark
 import com.thupo.presentation.screens.intro.components.NavyMid
 
 private const val CONTENT_TYPE_STICKER_PACK = "sticker_pack_item"
+
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -48,9 +52,11 @@ fun HomeScreen(
         onEvent = viewModel::onEvent,
         onNavigateToPackDetail = onNavigateToPackDetail,
         onSettingsClick = onSettingsClick,
+        generateAiPackUseCase = viewModel.generateAiPackUseCase,
         modifier = modifier
     )
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
@@ -58,12 +64,15 @@ fun HomeContent(
     onEvent: (HomeUiEvent) -> Unit,
     onNavigateToPackDetail: (Long) -> Unit,
     onSettingsClick: () -> Unit,
+    generateAiPackUseCase: com.thupo.domain.usecase.GenerateAiPackUseCase? = null,
     modifier: Modifier = Modifier
 ) {
     val backgroundBrush = remember {
         Brush.verticalGradient(listOf(NavyDark, NavyMid, NavyDark))
     }
     val scrimInteractionSource = remember { MutableInteractionSource() }
+    var showAiDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -78,6 +87,26 @@ fun HomeContent(
                     )
                 },
                 actions = {
+                    // Nút Tạo Sticker bằng AI
+                    GlassCard(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .clickable { showAiDialog = true },
+                        shape = CircleShape
+                    ) {
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = "Tạo bằng AI",
+                                tint = Color(0xFFB7A4FF),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+
+                    // Nút Cài đặt
                     GlassCard(
                         modifier = Modifier
                             .padding(end = 12.dp)
@@ -111,7 +140,7 @@ fun HomeContent(
                 onSelectAnimated = { onEvent(HomeUiEvent.OnSelectStickerType(StickerType.ANIMATED)) },
                 onSelectStatic = { onEvent(HomeUiEvent.OnSelectStickerType(StickerType.REGULAR)) },
                 onSelectMyStickers = { onEvent(HomeUiEvent.OnSelectMyStickers) },
-                onSelectExplore = { onEvent(HomeUiEvent.OnSelectExplore) }
+                onSelectExplore = { showAiDialog = true }
             )
         },
     ) { innerPadding ->
@@ -139,8 +168,10 @@ fun HomeContent(
                         val onPackClick = remember(pack.id, onNavigateToPackDetail) {
                             { onNavigateToPackDetail(pack.id) }
                         }
-                        val onAddToWhatsAppClick = remember(pack, context) {
-                            { com.thupo.core.whatsapp.WhatsAppStickerHelper.addToWhatsApp(context, pack) }
+                        val onAddToWhatsAppClick = remember(pack) {
+                            {
+                                com.thupo.core.whatsapp.WhatsAppStickerHelper.addToWhatsApp(context, pack)
+                            }
                         }
 
                         StickerPackCard(
@@ -177,6 +208,17 @@ fun HomeContent(
             }
         )
     }
+
+    if (showAiDialog && generateAiPackUseCase != null) {
+        CreateWithAiDialog(
+            useCase = generateAiPackUseCase,
+            onDismiss = { showAiDialog = false },
+            onSuccess = { newPackId ->
+                showAiDialog = false
+                onNavigateToPackDetail(newPackId)
+            }
+        )
+    }
 }
 
 @Composable
@@ -194,7 +236,7 @@ private fun EmptyStickerView(modifier: Modifier = Modifier) {
             fontWeight = FontWeight.SemiBold
         )
         Text(
-            text = "Nhấn nút (+) bên dưới để bắt đầu tạo sticker đầu tiên!",
+            text = "Nhấn nút (+) bên dưới hoặc biểu tượng ✨ để tạo sticker bằng AI!",
             style = MaterialTheme.typography.bodyMedium,
             color = Color.White.copy(0.6f)
         )
