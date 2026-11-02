@@ -6,7 +6,7 @@ import androidx.compose.runtime.Immutable
 data class StickerPack(
     val id: Long = 0,
     val name: String,
-    val stickers: List<String> = emptyList(),
+    val stickers: List<StickerItem> = emptyList(),
     val isAnimated: Boolean = false,
     val updatedAt: Long = System.currentTimeMillis()
 ) {

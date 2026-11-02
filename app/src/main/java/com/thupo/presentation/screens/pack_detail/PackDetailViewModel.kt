@@ -52,6 +52,12 @@ class PackDetailViewModel @Inject constructor(
         }
     }
 
+    fun updateEmojis(filePath: String, newEmojis: List<String>) {
+        viewModelScope.launch {
+            repository.updateStickerEmojis(packId, filePath, newEmojis)
+        }
+    }
+
     fun deletePack(onDeleted: () -> Unit) {
         val currentPack = pack.value ?: return
         viewModelScope.launch {

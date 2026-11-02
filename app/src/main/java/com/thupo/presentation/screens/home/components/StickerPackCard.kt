@@ -77,7 +77,7 @@ fun StickerPackCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 for (i in 0 until 4) {
-                    val uri = pack.stickers.getOrNull(i)
+                    val item = pack.stickers.getOrNull(i)
                     val slotShape = RoundedCornerShape(12.dp)
                     Box(
                         modifier = Modifier
@@ -88,9 +88,9 @@ fun StickerPackCard(
                             .border(1.dp, Color.White.copy(alpha = 0.15f), slotShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (uri != null) {
+                        if (item != null) {
                             AsyncImage(
-                                model = uri,
+                                model = item.filePath,
                                 contentDescription = null,
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop,
@@ -146,7 +146,7 @@ fun StickerPackCardPreView() {
         pack = StickerPack(
             id = 1,
             name = "Sticker Chó Cưng",
-            stickers = listOf("", "", ""),
+            stickers = emptyList(),
             isAnimated = false
         ),
         onPackClick = {},

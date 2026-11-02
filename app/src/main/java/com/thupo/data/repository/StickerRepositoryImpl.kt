@@ -2,6 +2,7 @@ package com.thupo.data.repository
 
 import android.content.Context
 import android.net.Uri
+import com.thupo.core.image.StickerClassifier
 import com.thupo.core.image.StickerImageProcessor
 import com.thupo.data.local.dao.StickerPackDao
 import com.thupo.data.local.entity.StickerPackEntity
@@ -20,7 +21,8 @@ import javax.inject.Singleton
 class StickerRepositoryImpl @Inject constructor(
     private val dao: StickerPackDao,
     @ApplicationContext private val context: Context,
-    private val imageProcessor: StickerImageProcessor
+    private val imageProcessor: StickerImageProcessor,
+    private val classifier: StickerClassifier
 ): StickerRepository {
     override fun getAllPacks(): Flow<List<StickerPack>> {
         return dao.getAllPacks().map { entities ->
@@ -61,18 +63,37 @@ class StickerRepositoryImpl @Inject constructor(
     override suspend fun addStickerToPack(packId: Long, stickerUri: String) {
         val entity = dao.getPackByIdOneShot(packId) ?: return
 
-        // Lưu ảnh vĩnh viễn vào bộ nhớ trong của ứng dụng
         val permanentPath = withContext(Dispatchers.IO) {
             saveImageToInternalStorage(packId, stickerUri)
         } ?: return
 
-        val updatedStickers = entity.stickers + permanentPath
+        // 1. Đọc lại Bitmap để AI phân tích emoji
+        val bitmap = withContext(Dispatchers.IO) {
+            android.graphics.BitmapFactory.decodeFile(permanentPath)
+        }
+
+        // 2. Chạy AI Classifier để lấy 1-3 Emoji
+        val emojis = if (bitmap != null) {
+            classifier.classifySticker(bitmap)
+        } else {
+            listOf("✨", "😎")
+        }
+
+        // 3. Tạo StickerItem hoàn chỉnh với đầy đủ đường dẫn và Emoji
+        val newItem = com.thupo.domain.model.StickerItem(
+            filePath = permanentPath,
+            emojis = emojis
+        )
+
+        val updatedStickers = entity.stickers + newItem
         dao.update(entity.copy(stickers = updatedStickers, updatedAt = System.currentTimeMillis()))
     }
 
     override suspend fun removeStickerFromPack(packId: Long, stickerUri: String) {
         val entity = dao.getPackByIdOneShot(packId) ?: return
-        val updatedStickers = entity.stickers.filter { it != stickerUri }
+
+        // Lọc bỏ sticker có filePath trùng với stickerUri cần xóa
+        val updatedStickers = entity.stickers.filter { it.filePath != stickerUri }
         dao.update(entity.copy(stickers = updatedStickers, updatedAt = System.currentTimeMillis()))
 
         withContext(Dispatchers.IO) {
@@ -82,6 +103,14 @@ class StickerRepositoryImpl @Inject constructor(
                 e.printStackTrace()
             }
         }
+    }
+
+    override suspend fun updateStickerEmojis(packId: Long, filePath: String, newEmojis: List<String>) {
+        val entity = dao.getPackByIdOneShot(packId) ?: return
+        val updatedStickers = entity.stickers.map { item ->
+            if (item.filePath == filePath) item.copy(emojis = newEmojis.take(3)) else item
+        }
+        dao.update(entity.copy(stickers = updatedStickers, updatedAt = System.currentTimeMillis()))
     }
 
     private suspend fun saveImageToInternalStorage(

@@ -108,7 +108,7 @@ class StickerContentProvider : ContentProvider() {
             }
         }
         for (pack in packs) {
-            val trayIcon = pack.stickers.firstOrNull()?.let { File(it).name } ?: "tray.png"
+            val trayIcon = pack.stickers.firstOrNull()?.let { File(it.filePath).name } ?: "tray.png"
             cursor.addRow(
                 arrayOf(
                     pack.id.toString(),
@@ -137,9 +137,10 @@ class StickerContentProvider : ContentProvider() {
         val dao = getDatabase().stickerPackDao()
         val pack = runBlocking { dao.getPackByIdOneShot(id) } ?: return cursor
 
-        for (stickerUri in pack.stickers) {
-            val fileName = File(stickerUri).name
-            cursor.addRow(arrayOf(fileName, "☕,🙂"))
+        // SỬA ĐOẠN NÀY: Dùng item.whatsappEmojiString (chuẩn "🐱,🐾" không khoảng trắng)
+        for (stickerItem in pack.stickers) {
+            val fileName = File(stickerItem.filePath).name
+            cursor.addRow(arrayOf(fileName, stickerItem.whatsappEmojiString))
         }
         return cursor
     }

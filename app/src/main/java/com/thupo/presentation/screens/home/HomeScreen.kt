@@ -206,8 +206,8 @@ private fun EmptyStickerView(modifier: Modifier = Modifier) {
 fun HomeScreenPreview() {
     val samplePacks = remember {
         listOf(
-            StickerPack(id = 1, name = "Sticker Chó Cưng", stickers = listOf("", "", ""), isAnimated = false),
-            StickerPack(id = 2, name = "Meme Vui Vẻ", stickers = listOf("", ""), isAnimated = true)
+            StickerPack(id = 1, name = "Sticker Chó Cưng", stickers = emptyList(), isAnimated = false),
+            StickerPack(id = 2, name = "Meme Vui Vẻ", stickers = emptyList(), isAnimated = true)
         )
     }
     MaterialTheme {

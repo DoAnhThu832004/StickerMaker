@@ -2,6 +2,7 @@ package com.thupo.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.thupo.domain.model.StickerItem
 import com.thupo.domain.model.StickerPack
 
 @Entity(tableName = "sticker_packs")
@@ -9,7 +10,7 @@ data class StickerPackEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,
-    val stickers: List<String>,
+    val stickers: List<StickerItem>,
     val isAnimated: Boolean,
     val updatedAt: Long
 ) {

@@ -80,5 +80,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     // ml kit (dùng để tách người, vật,...)
     implementation("com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1")
+    // ML Kit Image Labeling (Phân loại vật thể On-Device)
+    implementation("com.google.android.gms:play-services-mlkit-image-labeling:16.0.8")
+    // ML Kit Face Detection (Nhận diện khuôn mặt & chỉ số cười)
+    implementation("com.google.android.gms:play-services-mlkit-face-detection:17.1.0")
+    // Gson (Chuyển đổi List<StickerItem> sang JSON lưu vào Room)
+    implementation("com.google.code.gson:gson:2.11.0")
 
 }

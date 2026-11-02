@@ -55,6 +55,7 @@ fun PackDetailScreen(
     }
 
     var showDeleteConfirmation by remember { mutableStateOf(false) }
+    var editingSticker by remember { mutableStateOf<com.thupo.domain.model.StickerItem?>(null) }
 
     Scaffold(
         modifier = Modifier
@@ -171,7 +172,7 @@ fun PackDetailScreen(
                 }
 
                 // Danh sách các sticker đã thêm
-                items(currentPack.stickers, key = { it }) { stickerUri ->
+                items(currentPack.stickers, key = { it.filePath }) { item ->
                     Box(
                         modifier = Modifier
                             .aspectRatio(1f)
@@ -179,13 +180,13 @@ fun PackDetailScreen(
                             .background(Color.White.copy(alpha = 0.05f))
                     ) {
                         AsyncImage(
-                            model = stickerUri,
+                            model = item.filePath,
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
                         IconButton(
-                            onClick = { viewModel.removeSticker(stickerUri) },
+                            onClick = { viewModel.removeSticker(item.filePath) },
                             modifier = Modifier
                                 .align(Alignment.TopEnd)
                                 .size(32.dp)
@@ -197,6 +198,21 @@ fun PackDetailScreen(
                                 contentDescription = "Xóa",
                                 tint = Color.White,
                                 modifier = Modifier.size(16.dp)
+                            )
+                        }
+
+                        // Badge Emoji ở góc dưới bên trái
+                        Surface(
+                            color = Color.Black.copy(alpha = 0.65f),
+                            shape = RoundedCornerShape(topEnd = 8.dp, bottomStart = 14.dp),
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .clickable { editingSticker = item }
+                        ) {
+                            Text(
+                                text = item.emojis.joinToString(" "),
+                                fontSize = 11.sp,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                             )
                         }
                     }
@@ -260,6 +276,93 @@ fun PackDetailScreen(
                 }
             }
         }
+    }
+
+    // Dialog chọn nhanh Emoji
+    editingSticker?.let { sticker ->
+        var currentEmojis by remember(sticker) { mutableStateOf(sticker.emojis) }
+        val quickSuggestions = listOf("😂", "❤️", "😭", "😡", "👍", "🎉", "🔥", "✨", "🐱", "🐶")
+
+        AlertDialog(
+            onDismissRequest = { editingSticker = null },
+            title = { Text("Chỉnh sửa Emoji", fontWeight = FontWeight.Bold) },
+            text = {
+                Column {
+                    Text(
+                        text = "WhatsApp sẽ gợi ý sticker này khi bạn gõ các emoji bên dưới (tối đa 3):",
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = "Đang chọn: ${if (currentEmojis.isEmpty()) "(Trống)" else currentEmojis.joinToString("  ")}",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF6C5CE7)
+                    )
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Text("Chọn nhanh:", fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        quickSuggestions.take(5).forEach { emoji ->
+                            AssistChip(
+                                onClick = {
+                                    if (currentEmojis.size < 3 && !currentEmojis.contains(emoji)) {
+                                        currentEmojis = currentEmojis + emoji
+                                    }
+                                },
+                                label = { Text(emoji, fontSize = 16.sp) }
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        quickSuggestions.drop(5).forEach { emoji ->
+                            AssistChip(
+                                onClick = {
+                                    if (currentEmojis.size < 3 && !currentEmojis.contains(emoji)) {
+                                        currentEmojis = currentEmojis + emoji
+                                    }
+                                },
+                                label = { Text(emoji, fontSize = 16.sp) }
+                            )
+                        }
+                    }
+
+                    if (currentEmojis.isNotEmpty()) {
+                        TextButton(
+                            onClick = { currentEmojis = emptyList() },
+                            modifier = Modifier.align(Alignment.End)
+                        ) {
+                            Text("Xóa hết", fontSize = 12.sp, color = MaterialTheme.colorScheme.error)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(onClick = {
+                    val finalEmojis = if (currentEmojis.isEmpty()) listOf("✨") else currentEmojis
+                    viewModel.updateEmojis(sticker.filePath, finalEmojis)
+                    editingSticker = null
+                }) {
+                    Text("Lưu")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { editingSticker = null }) {
+                    Text("Hủy")
+                }
+            }
+        )
     }
 }
 
