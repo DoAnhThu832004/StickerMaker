@@ -18,7 +18,7 @@ import kotlin.coroutines.resume
 @Singleton
 class StickerClassifier @Inject constructor() {
 
-    // 1. Cấu hình Face Detector: Bật CLASSIFICATION_MODE_ALL để lấy chỉ số cười (smilingProbability)
+    // 1. Cấu hình Face Detector: Bật CLASSIFICATION_MODE_ALL để lấy chỉ số cười và trạng thái mắt
     private val faceDetectorOptions = FaceDetectorOptions.Builder()
         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
         .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
@@ -63,7 +63,7 @@ class StickerClassifier @Inject constructor() {
     }
 
     /**
-     * Nhận diện khuôn mặt và cảm xúc nụ cười
+     * Nhận diện khuôn mặt, nụ cười và trạng thái nhắm/mở mắt
      */
     private suspend fun detectFaceEmotion(image: InputImage): List<String>? =
         suspendCancellableCoroutine { cont ->
@@ -73,7 +73,9 @@ class StickerClassifier @Inject constructor() {
                         // Lấy khuôn mặt rõ nhất (thường là mặt đầu tiên)
                         val primaryFace = faces[0]
                         val smileProb = primaryFace.smilingProbability
-                        cont.resume(EmojiRuleEngine.mapFaceToEmojis(smileProb))
+                        val leftEyeProb = primaryFace.leftEyeOpenProbability
+                        val rightEyeProb = primaryFace.rightEyeOpenProbability
+                        cont.resume(EmojiRuleEngine.mapFaceToEmojis(smileProb, leftEyeProb, rightEyeProb))
                     } else {
                         // Không có mặt người trong ảnh
                         cont.resume(null)

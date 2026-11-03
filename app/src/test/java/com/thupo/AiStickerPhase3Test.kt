@@ -44,6 +44,10 @@ class AiStickerPhase3Test {
         val smileEmojis = EmojiRuleEngine.mapFaceToEmojis(0.85f)
         assertTrue("Smiling > 0.7 phải ra emoji cười", smileEmojis.contains("😄") || smileEmojis.contains("😂"))
 
+        // Cảm xúc nháy mắt (1 mắt mở to, 1 mắt nhắm)
+        val winkEmojis = EmojiRuleEngine.mapFaceToEmojis(0.8f, leftEyeOpenProbability = 0.85f, rightEyeOpenProbability = 0.1f)
+        assertTrue("Nháy mắt phải ra emoji 😉", winkEmojis.contains("😉"))
+
         // Cảm xúc nghiêm túc/buồn
         val seriousEmojis = EmojiRuleEngine.mapFaceToEmojis(0.15f)
         assertTrue("Smiling < 0.25 phải ra emoji suy tư", seriousEmojis.contains("😐") || seriousEmojis.contains("🤔"))
@@ -52,9 +56,17 @@ class AiStickerPhase3Test {
         val catEmojis = EmojiRuleEngine.mapLabelsToEmojis(listOf("Mammal", "Cat", "Pet"))
         assertTrue("Nhãn Cat phải có emoji mèo", catEmojis.contains("🐱"))
 
+        // Nhận diện thỏ
+        val rabbitEmojis = EmojiRuleEngine.mapLabelsToEmojis(listOf("Animal", "Rabbit"))
+        assertTrue("Nhãn Rabbit phải có emoji thỏ", rabbitEmojis.contains("🐰"))
+
+        // Nhận diện gấu trúc
+        val pandaEmojis = EmojiRuleEngine.mapLabelsToEmojis(listOf("Panda"))
+        assertTrue("Nhãn Panda phải có emoji gấu trúc", pandaEmojis.contains("🐼"))
+
         // Nhận diện đồ ăn
         val foodEmojis = EmojiRuleEngine.mapLabelsToEmojis(listOf("Dish", "Food", "Fast food"))
-        assertTrue("Nhãn Food phải có emoji đồ ăn", foodEmojis.contains("🍔") || foodEmojis.contains("😋"))
+        assertTrue("Nhãn Food phải có emoji đồ ăn", foodEmojis.contains("🍔") || foodEmojis.contains("🍕"))
     }
 
     @Test
